@@ -1,12 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View, Text, TextInput, TouchableOpacity, StatusBar } from "react-native";
+import { SigninController } from "../../controller/login_controller";
+import { NavProps } from "../../routes";
 import { Title } from "./components/title_component";
 
 export interface ISignin {
  
 }
-export const Signin : React.FC<ISignin> = () => {
-  
+export const Signin : React.FC<NavProps> = ({navigation}) => {
+  const controller = new SigninController();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoad, setIsLoad] = useState(false);
+  const [error, setError] = useState("");
+
+  async function login(email:string, password:string){
+    setIsLoad(true);  
+    const result = await controller.login(email, password);
+    setIsLoad(false);  
+    if(!result){
+      setError("Login invalido")
+      console.log(error)
+    }
+    console.log(result)
+  }
+
   return (
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.login}>
@@ -21,26 +39,31 @@ export const Signin : React.FC<ISignin> = () => {
           autoCapitalize="none"
           autoComplete="email"
           autoCorrect={false}
-          onChangeText={() => {}}
+          onChangeText={(value) => {
+            setEmail(value)
+          }}
         />
 
         <TextInput
           style={styles.input}
           placeholder="Senha"
-          //keyboardType="visible-password"
           textContentType="password"
           autoCapitalize="none"
           autoComplete="password"
           autoCorrect={false}
           secureTextEntry={true}
-          onChangeText={() => {}}
+          onChangeText={(value) => {
+            setPassword(value)
+          }}
         />
         
-        <TouchableOpacity style={styles.buttonSubmit}>
+        <TouchableOpacity style={styles.buttonSubmit} onPress= {(e) => login(email, password)}>
           <Text style={styles.submitText}>Acessar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonRegister}>
+        <TouchableOpacity style={styles.buttonRegister} onPress={(e)=> {
+           navigation.navigate('Register')
+        }}>
           <Text style={styles.registerText}>Criar conta gratuita</Text>
         </TouchableOpacity>
       </View>

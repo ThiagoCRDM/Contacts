@@ -1,16 +1,43 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import React, { useState }from 'react';
+import {Alert, FlatList, StyleSheet, Text, View, Modal, Pressable } from 'react-native';
 import { ButtonAdd } from './components/buttonadd_component';
+import { ModalComponent } from './components/modal_comnponent';
 
 export interface IHome {
 
 }
 
 export const Home : React.FC<IHome> = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [phone, setPhone] = React.useState('');
+  const [name, setName] = React.useState('');
   return (
     <View style={styles.container}>
+      <ModalComponent
+      onChangeNumber={
+        (masked, unmasked) => {
+          setPhone(masked); // you can use the unmasked value as well
+  
+          // assuming you typed "9" all the way:
+          console.log(masked); // (99) 99999-9999
+          console.log(unmasked); // 99999999999
+        }
+      }
+      onChangeText={(value)=>{
+        setName(value)
+        console.log(value)
+      }}
+      name={name}
+      number={phone}
+      isModalVisible = {modalVisible}
+      onPress={()=>{}}
+      onRequestClose={()=> {
+        Alert.alert("Modal foi fechado.");
+          setModalVisible(!modalVisible);
+      }}
+      />
       <View style= {styles.bar}>
-        <ButtonAdd />
+        <ButtonAdd onPress = { (e) => setModalVisible(true)} />
       </View>
       <View>
       <FlatList
@@ -57,4 +84,45 @@ const styles = StyleSheet.create({
     height: 44,
     
   },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });

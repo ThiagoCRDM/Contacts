@@ -1,13 +1,13 @@
 import React from "react";
 import { KeyboardAvoidingView, StyleSheet, View, Text, TextInput, TouchableOpacity, StatusBar } from "react-native";
-import { SignController } from "../../controller/signuup_controller";
+import { SignUpController } from "../../controller/signuup_controller";
 import { Title } from "../signin/components/title_component";
 
 export interface ISignin {
  
 }
 export const Signup : React.FC = () => {
-  const controller = new SignController();
+  const controller = new SignUpController();
   return (
     <>
       <KeyboardAvoidingView style={styles.container}>
@@ -48,7 +48,7 @@ export const Signup : React.FC = () => {
             />
 
             <TouchableOpacity style={styles.buttonSubmit} onPress= {(e) => {
-                  controller.creat({name:"tiago", email:"thiagohs619@gmail.com", password:"as1d3asd2as23d1a3s21da3"})
+                  controller.create({name:"Thiago", email:"thiagocesarmata@gmail.com", password:"as1d3asdda3"})
             }}>
               <Text style={styles.submitText}>Acessar</Text>
             </TouchableOpacity>

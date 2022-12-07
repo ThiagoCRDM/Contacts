@@ -1,14 +1,14 @@
 import React, { ReactNode } from "react";
-import { StyleSheet, TouchableOpacity, View, Text} from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text, GestureResponderEvent} from "react-native";
 
 export interface IButtonAdd {
-  
+  onPress?: ((event: GestureResponderEvent) => void) | undefined;
 }
-export const ButtonAdd : React.FC<IButtonAdd> = () => {
+export const ButtonAdd : React.FC<IButtonAdd> = ({onPress}) => {
 
   return (
     <View>
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
+      <TouchableOpacity style={styles.button} onPress={onPress}>
         <Text style={styles.buttontext}>Adicionar contato</Text>
       </TouchableOpacity>
     </View>
