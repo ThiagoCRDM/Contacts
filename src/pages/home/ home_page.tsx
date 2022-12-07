@@ -1,5 +1,8 @@
-import React, { useState }from 'react';
-import {Alert, FlatList, StyleSheet, Text, View, Modal, Pressable } from 'react-native';
+import React, { useEffect, useState }from 'react';
+import {Alert, FlatList, StyleSheet, Text, View, Modal, Pressable, TouchableOpacity } from 'react-native';
+import { ContactsController } from '../../controller/contacts_controller';
+import { Account } from '../../models/account';
+import { Contact } from '../../models/contact';
 import { ButtonAdd } from './components/buttonadd_component';
 import { ModalComponent } from './components/modal_comnponent';
 
@@ -8,29 +11,43 @@ export interface IHome {
 }
 
 export const Home : React.FC<IHome> = () => {
+  const controller = new ContactsController();
   const [modalVisible, setModalVisible] = useState(false);
   const [phone, setPhone] = React.useState('');
   const [name, setName] = React.useState('');
+  const [contacList, setContactList] = useState(Array<Contact>);
+  useEffect(()=> {
+   controller.getContacts().then((e) => {
+      setContactList(e as [Contact]);
+   })
+   
+  }, [])
   return (
     <View style={styles.container}>
       <ModalComponent
       onChangeNumber={
         (masked, unmasked) => {
           setPhone(masked); // you can use the unmasked value as well
-  
-          // assuming you typed "9" all the way:
-          console.log(masked); // (99) 99999-9999
-          console.log(unmasked); // 99999999999
         }
       }
       onChangeText={(value)=>{
         setName(value)
-        console.log(value)
       }}
       name={name}
       number={phone}
       isModalVisible = {modalVisible}
-      onPress={()=>{}}
+      onPress={async ()=>{
+
+        const result = await controller.create({
+          name:name,
+          number:phone,
+          accountId: Account.getInstance().getId()
+        });
+        setModalVisible(!modalVisible);
+        
+        setContactList([...contacList, result as Contact])
+
+      }}
       onRequestClose={()=> {
         Alert.alert("Modal foi fechado.");
           setModalVisible(!modalVisible);
@@ -42,22 +59,26 @@ export const Home : React.FC<IHome> = () => {
       <View>
       <FlatList
         ItemSeparatorComponent={()=> <View style={{width:'100%', borderBottomWidth:1, borderColor:'#9D9E9F'}}/>}
-        data={[
-          {"id": "1","name": 'Devin', "number":"(64) 9 9986-7333"},
-          {"id": "6","name": 'Joel', "number":"(64) 9 9986-7333"},
-          {"id": "3","name": 'Dominic', "number":"(64) 9 9986-7333"},
-          {"id": "9","name": 'John', "number":"(64) 9 9986-7333"},
-          {"id": "5","name": 'James', "number":"(64) 9 9986-7333"},
-          {"id": "4","name": 'Jackson', "number":"(64) 9 9986-7333"},
-          {"id": "10","name": 'Jillian', "number":"(64) 9 9986-7333"},
-          {"id": "2","name": 'Dan', "number":"(64) 9 9986-7333"},
-          {"id": "11","name": 'Jimmy', "number":"(64) 9 9986-7333"},
-          {"id": "12","name": 'Julie', "number":"(64) 9 9986-7333"},
-        ].sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))}
+        data={contacList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))}
         renderItem={({item}) => 
-        <View key={item.id}>
-          <Text style={styles.item}>{item.name}</Text>
-          <Text style={styles.item}>{item.number}</Text>
+        <View key={item.id} style={{flexDirection:"row", alignItems:"center", justifyContent:"space-between"}}>
+          <View> 
+            <Text style={styles.item}>{item.name}</Text>
+            <Text style={styles.item}>{item.number}</Text> 
+          </View>
+          <TouchableOpacity style={styles.buttonExcluir} onPress={()=>{
+           Alert.alert("Deseja excluir esse contato?", item.name, [{
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+           },{text: "OK", onPress: () => {
+            controller.excluir(item);
+            contacList.splice(contacList.indexOf(item), 1);
+            setContactList([...contacList])
+           }}])
+          }}>
+            <Text style={styles.buttontextExcluir}>Excluir</Text>
+          </TouchableOpacity>
         </View>
       }
       />
@@ -88,6 +109,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2
+  },
+  buttonExcluir: {
+    width: 100,
+    
+    borderRadius: 100,
+    padding: 10,
+   
+    alignItems: "center",
+  },
+  buttontextExcluir:{
+    alignContent:'center',
+    textAlign:"center",
+    fontSize:16,
+    color:"red",
   },
   buttonOpen: {
     backgroundColor: "#F194FF",

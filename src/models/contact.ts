@@ -1,10 +1,15 @@
-export class Contact {
-  id? : string;
-  name : string;
-  number: Array<string>;
+import { Account } from "./account";
 
-  constructor(name: string, number: [string]){
+export class Contact {
+
+  id? : string;
+  accountId: string;
+  name : string;
+  number: string;
+
+  constructor(name: string, number: string, accountId:string){
     this.name =  name;
     this.number = number;
+    this.accountId = accountId;
   }
 } 

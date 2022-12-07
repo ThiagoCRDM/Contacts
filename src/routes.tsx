@@ -11,7 +11,7 @@ type RootStackParamList = {
   Home:  undefined;
 };
 
-export type NavProps = NativeStackScreenProps<RootStackParamList, 'Home'>
+export type NavProps = NativeStackScreenProps<RootStackParamList, 'Login'>
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -19,7 +19,7 @@ const Routes: React.FC = () => {
   return (
     <Stack.Navigator
       defaultScreenOptions={{ headerShown: false }}
-      initialRouteName={"Home"}
+      initialRouteName={"Login"}
     >
       <Stack.Screen name="Login" component={Signin} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Signup} options={{ headerShown: false }} />

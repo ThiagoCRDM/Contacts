@@ -23,6 +23,7 @@ export const Signin : React.FC<NavProps> = ({navigation}) => {
       console.log(error)
     }
     console.log(result)
+    navigation.navigate('Home')
   }
 
   return (

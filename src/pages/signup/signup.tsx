@@ -1,13 +1,20 @@
-import React from "react";
+import { async } from "@firebase/util";
+import React, { useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View, Text, TextInput, TouchableOpacity, StatusBar } from "react-native";
 import { SignUpController } from "../../controller/signuup_controller";
+import { Account } from "../../models/account";
+import { NavProps } from "../../routes";
 import { Title } from "../signin/components/title_component";
 
 export interface ISignin {
  
 }
-export const Signup : React.FC = () => {
+export const Signup : React.FC<NavProps> = ({navigation}) => {
   const controller = new SignUpController();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+ 
   return (
     <>
       <KeyboardAvoidingView style={styles.container}>
@@ -23,7 +30,9 @@ export const Signup : React.FC = () => {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect={false}
-              onChangeText={() => {}}
+              onChangeText={(value) => {
+                setName(value)
+              }}
             />
             <TextInput
               style={styles.input}
@@ -33,7 +42,9 @@ export const Signup : React.FC = () => {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect={false}
-              onChangeText={() => {}}
+              onChangeText={(value) => {
+                setEmail(value)
+              }}
             />
             <TextInput
               style={styles.input}
@@ -44,11 +55,18 @@ export const Signup : React.FC = () => {
               autoComplete="password"
               autoCorrect={false}
               secureTextEntry={true}
-              onChangeText={() => {}}
+              onChangeText={(value) => {
+                setPassword(value)
+              }}
             />
 
-            <TouchableOpacity style={styles.buttonSubmit} onPress= {(e) => {
-                  controller.create({name:"Thiago", email:"thiagocesarmata@gmail.com", password:"as1d3asdda3"})
+            <TouchableOpacity style={styles.buttonSubmit} onPress= {async (e) => {
+                  Account.getInstance().setName(name)
+                  Account.getInstance().setEmail(email)
+                  Account.getInstance().setPassword(password)
+                  const result = await controller.create(Account.getInstance())
+                  
+                  navigation.navigate('Home')
             }}>
               <Text style={styles.submitText}>Acessar</Text>
             </TouchableOpacity>
